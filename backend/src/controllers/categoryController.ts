@@ -23,29 +23,3 @@ export const fetchAllCategories = async (req: Request, res: Response, next: Next
     next(err);
   }
 };
-
-export const executeSubCategoryCreation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const { category_id, name } = req.body;
-    if (!category_id || !name) {
-      return next(new CustomResponseError('חובה לספק מזהה קטגוריה ושם לתת-קטגוריה', 400));
-    }
-    const newSubCategory = await categoryService.createNewSubCategory(category_id, name);
-    res.status(201).json({ success: true, message: 'תת-הקטגוריה נוצרה בהצלחה', data: newSubCategory });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const fetchSubCategories = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const categoryId = req.params.categoryId as string;
-    if (!categoryId) {
-      return next(new CustomResponseError('חובה לספק מזהה קטגוריה', 400));
-    }
-    const subCategories = await categoryService.getSubCategoriesByCategoryId(categoryId);
-    res.status(200).json({ success: true, data: subCategories });
-  } catch (err) {
-    next(err);
-  }
-};
