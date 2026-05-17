@@ -1,14 +1,27 @@
 import { Routes } from '@angular/router';
-import { RegisterComponent } from './register/register';
-import { LoginComponent } from './login/login';
-import { CoursesComponent } from './courses/courses';
-import { AdminComponent } from './admin/admin';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { LoginComponent } from './components/login/login';
+import { CoursesComponent } from './components/courses/courses';
+import { AdminComponent } from './components/admin/admin'; 
+
+const adminGuard = () => {
+  const router = inject(Router);
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  if (user && user.isAdmin === true) {
+    return true; 
+  }
+  
+  alert('אין לך הרשאות מנהל לגשת לאזור זה!');
+  router.navigate(['/courses']);
+  return false;
+};
 
 export const routes: Routes = [
-  { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: CoursesComponent }, // הדשבורד של המשתמש הרגיל
-  { path: 'admin', component: AdminComponent },       
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' }
+  { path: 'courses', component: CoursesComponent },
+  { path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
+  { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

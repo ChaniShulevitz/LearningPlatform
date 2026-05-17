@@ -1,0 +1,15 @@
+<nav class="custom-navbar">
+  <div class="logo-area" routerLink="/courses">
+    🚀 <span>LEARNING AI PLATFORM</span>
+  </div>
+  
+  <div class="nav-links">
+    <a *ngIf="isLoggedIn()" routerLink="/courses" class="nav-item">מחולל שיעורים</a>
+    <a *ngIf="isLoggedIn() && isAdmin()" routerLink="/admin" class="nav-item admin-badge">🛡️ פאנל ניהול</a>
+    
+    <a *ngIf="!isLoggedIn()" routerLink="/login" class="nav-item">התחברות</a>
+    <a *ngIf="!isLoggedIn()" routerLink="/register" class="nav-item">הרשמה</a>
+    
+    <button *ngIf="isLoggedIn()" (click)="logout()" class="logout-btn">התנתק 🚪</button>
+  </div>
+</nav>
