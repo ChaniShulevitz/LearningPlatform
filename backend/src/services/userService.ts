@@ -1,22 +1,55 @@
-import User, { IUser } from '../models/user';
+import User from '../models/user';
+import Prompt from '../models/prompt';
+import jwt from 'jsonwebtoken';
 
-export const findUserById = async (id: string): Promise<IUser | null> => {
-  return await User.findById(id).exec();
+const generateToken = (id: string): string => {
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '30d' });
 };
 
-export const findUserByPhone = async (phone: string): Promise<IUser | null> => {
-  return await User.findOne({ phone }).exec();
+export const registerUser = async (userData: any) => {
+  const { name, email, password, phone } = userData;
+  const userExists = await (User as any).findOne({ email });
+  if (userExists) {
+    throw new Error('משתמש עם אימייל זה כבר קיים במערכת');
+  }
+  
+  // כאן מונגו מייצר את ה-_id אוטומטית בצורה חלקה
+  const user = await (User as any).create({ name, email, password, phone });
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    token: generateToken(user._id.toString()),
+  };
 };
 
-export const createNewUser = async (id: string, name: string, phone: string, role?: string): Promise<IUser> => {
-  const user = new User({ _id: id, name, phone, role: role || 'user' });
-  return await user.save();
+export const loginUser = async (email: string, password: string) => {
+  const user = await (User as any).findOne({ email });
+  if (user && (await user.matchPassword(password))) {
+    return {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      token: generateToken(user._id.toString()),
+    };
+  } else {
+    throw new Error('אימייל או סיסמה שגויים');
+  }
 };
 
-export const fetchPaginatedUsers = async (skip: number, limit: number): Promise<IUser[]> => {
-  return await User.find().skip(skip).limit(limit).exec();
-};
-
-export const countTotalUsers = async (): Promise<number> => {
-  return await User.countDocuments().exec();
+export const getAllUsersAndHistory = async () => {
+  const users = await (User as any).find({}).select('-password').lean();
+  return Promise.all(
+    users.map(async (user: any) => {
+      const history = await Prompt.find({ user_id: user._id })
+        .populate('category_id', 'name')
+        .populate('sub_category_id', 'name')
+        .sort({ created_at: -1 });
+      return { ...user, history };
+    })
+  );
 };
