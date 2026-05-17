@@ -60,10 +60,60 @@ During the development process, the following key assumptions were made:
 
 The system relies on specific environment settings. A replica template is provided inside `backend/.env.example`.
 
-To set up your local system variables, create a `.env` file in the root of the **backend** directory and configure the following parameters:
+To set up your local system variables, create a `.env` file in the root of the backend directory and configure the following parameters:
 
-```env
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/ai-learning-platform
 JWT_SECRET=your_secure_jwt_random_secret_string
 OPENAI_API_KEY=your_official_openai_integration_key
+
+---
+
+## How to Run the Project Locally
+
+Follow these exact steps to launch the entire ecosystem locally on your machine.
+
+### Step 1: Database Initialization via Docker
+The database is containerized for seamless execution. Ensure Docker Desktop is active on your machine, open your terminal in the main project root directory, and run the following command:
+
+docker compose up -d
+
+Note: This command spins up an isolated MongoDB instance mapped to port 27017, using persistent local volumes so your data remains saved even when the container stops.
+
+### Step 2: Running the Backend Server
+1. Open a terminal instance and navigate to the backend folder:
+cd backend
+
+2. Install the necessary system dependencies:
+npm install
+
+3. Boot up the server in development mode:
+npm run dev
+
+The backend server will initialize successfully, and the interactive API documentation console will become live immediately at: http://localhost:5000/api-docs
+
+### Step 3: Running the Frontend Client
+1. Open a new, separate terminal instance and navigate to the frontend folder:
+cd frontend
+
+2. Install the frontend interface packages:
+npm install
+
+3. Run the local application development server:
+npm run dev
+
+Open your browser and navigate to the local URL provided in the terminal (usually http://localhost:5173 or http://localhost:3000) to view the application interface.
+
+---
+
+## Automated Integration Testing Suite
+
+The application includes automated integration testing configurations built using Jest and Supertest to programmatically ensure endpoint security and core middleware validation.
+
+### Test Coverage Objective
+The framework runs automated end-to-end simulation validations directly against the live server instance without mocking the express routing pipeline. The default tests validate that the custom authMiddleware blocks illegal access requests to sensitive prompt generation vectors (/api/prompts) by throwing accurate structured exceptions and responding with appropriate error states when tokens are missing or structurally invalid.
+
+### Running the Test Suite
+To execute the integration tests, clear any running backend local processes, navigate to the backend subdirectory, and run the following terminal script command:
+
+npm test
