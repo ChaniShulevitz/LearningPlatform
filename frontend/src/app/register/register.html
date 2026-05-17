@@ -1,0 +1,33 @@
+<div style="max-width: 400px; margin: 60px auto; padding: 30px; border: 1px solid #e0e0e0; border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background-color: #ffffff;">
+  <h2 style="text-align: center; color: #333; margin-bottom: 25px;">יצירת חשבון חדש</h2>
+  
+  <form (ngSubmit)="onRegister()">
+    <div style="margin-bottom: 18px;">
+      <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #555;">שם מלא</label>
+      <input type="text" [(ngModel)]="userData.name" name="name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px;">
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #555;">אימייל</label>
+      <input type="email" [(ngModel)]="userData.email" name="email" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; text-align: left; direction: ltr;">
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #555;">סיסמה</label>
+      <input type="password" [(ngModel)]="userData.password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; text-align: left; direction: ltr;">
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #555;">מספר טלפון</label>
+      <input type="text" [(ngModel)]="userData.phone" name="phone" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px;">
+    </div>
+
+    <button type="submit" style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background-color 0.2s;">
+      להרשמה במערכת
+    </button>
+  </form>
+
+  <p *ngIf="message" [style.color]="isSuccess ? '#28a745' : '#dc3545'" style="margin-top: 20px; font-weight: bold; text-align: center; font-size: 15px;">
+    {{ message }}
+  </p>
+</div>

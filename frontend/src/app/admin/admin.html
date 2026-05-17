@@ -1,0 +1,42 @@
+<div style="max-width: 1000px; margin: 40px auto; padding: 20px; font-family: sans-serif; direction: rtl;">
+  <h2 style="color: #dc2626; border-bottom: 3px solid #dc2626; padding-bottom: 10px; margin-bottom: 30px;">🛡️ פאנל ניהול מערכת (Admin Dashboard)</h2>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px;">
+    
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+      <h3 style="color: #1e293b; margin-top: 0; margin-bottom: 15px; font-size: 18px;">👥 משתמשים רשומים במערכת</h3>
+      <table style="width: 100%; border-collapse: collapse; text-align: right;">
+        <tr style="background-color: #f1f5f9;">
+          <th style="padding: 12px; border-bottom: 2px solid #cbd5e1;">מזהה</th>
+          <th style="padding: 12px; border-bottom: 2px solid #cbd5e1;">שם מלא</th>
+          <th style="padding: 12px; border-bottom: 2px solid #cbd5e1;">טלפון</th>
+        </tr>
+        <tr *ngFor="let user of allUsers">
+          <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; color: #64748b;">{{ user.id }}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #0f172a;">{{ user.name }}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; color: #334155;">{{ user.phone }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+      <h3 style="color: #1e293b; margin-top: 0; margin-bottom: 15px; font-size: 18px;">⏱️ היסטוריית שאלות ושיעורים שנוצרו</h3>
+      
+      <div style="max-height: 400px; overflow-y: auto;">
+        <div *ngFor="let item of allHistory" style="background: #f8fafc; padding: 14px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0;">
+          <div style="font-size: 13px; color: #2563eb; font-weight: bold; margin-bottom: 4px;">
+            👤 מזהה משתמש ששאל: {{ item.user_id }}
+          </div>
+          <div style="font-weight: 600; color: #1e293b; margin-bottom: 6px;">
+            ❓ השאלה: "{{ item.prompt }}"
+          </div>
+          <div style="font-size: 14px; color: #475569; background: white; padding: 8px; border-radius: 4px; border: 1px dashed #cbd5e1;">
+             תשובת המערכת: {{ item.response }}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+</div>

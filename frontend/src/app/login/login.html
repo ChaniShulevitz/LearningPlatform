@@ -1,0 +1,23 @@
+<div style="max-width: 400px; margin: 60px auto; padding: 30px; border: 1px solid #e0e0e0; border-radius: 12px; font-family: sans-serif; direction: rtl; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background-color: #ffffff;">
+  <h2 style="text-align: center; color: #333; margin-bottom: 25px;">כניסה למערכת</h2>
+  
+  <form (ngSubmit)="onLogin()">
+    <div style="margin-bottom: 18px;">
+      <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #555;">אימייל</label>
+      <input type="email" [(ngModel)]="loginData.email" name="email" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; text-align: left; direction: ltr;">
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #555;">סיסמה</label>
+      <input type="password" [(ngModel)]="loginData.password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; text-align: left; direction: ltr;">
+    </div>
+
+    <button type="submit" style="width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold;">
+      התחברות
+    </button>
+  </form>
+
+  <p *ngIf="message" [style.color]="isSuccess ? '#28a745' : '#dc3545'" style="margin-top: 20px; font-weight: bold; text-align: center;">
+    {{ message }}
+  </p>
+</div>
