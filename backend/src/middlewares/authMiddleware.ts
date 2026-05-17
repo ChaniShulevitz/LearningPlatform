@@ -28,7 +28,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction): 
       return next(new CustomResponseError('המשתמש המחובר אינו קיים עוד במערכת', 401));
     }
 
-    (req as any).user = currentUser;
+    req.user = currentUser; 
     next();
   } catch (err) {
     next(new CustomResponseError('קוד האימות אינו תקין או שפג תוקפו', 401));
@@ -36,9 +36,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction): 
 };
 
 export const restrictToAdmin = (req: Request, res: Response, next: NextFunction): void => {
-  const user = (req as any).user;
-
-  if (!user || user.role !== 'admin') {
+  if (!req.user || req.user.role !== 'admin') {
     return next(new CustomResponseError('אין לך הרשאה לבצע פעולה זו. מיועד למנהלים בלבד', 403));
   }
 

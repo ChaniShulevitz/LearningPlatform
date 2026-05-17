@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { fetchAllCategories, fetchSubCategories, executeCategoryCreation } from '../controllers/categoryController';
+import { fetchAllCategories, fetchSubCategories, executeCategoryCreation, executeSubCategoryCreation } from '../controllers/categoryController';
 import { protect, restrictToAdmin } from '../middlewares/authMiddleware';
 
 const router = Router();
@@ -15,8 +15,6 @@ const router = Router();
  * responses:
  * 200:
  * description: List of categories retrieved successfully
- * 401:
- * description: Unauthorized session
  */
 router.get('/', protect, fetchAllCategories);
 
@@ -34,20 +32,41 @@ router.get('/', protect, fetchAllCategories);
  * application/json:
  * schema:
  * type: object
- * required:
- * - name
+ * required: [name]
  * properties:
  * name:
  * type: string
  * responses:
  * 201:
  * description: Category created successfully
- * 400:
- * description: Missing category name
- * 403:
- * description: Restricted to admins
  */
 router.post('/', protect, restrictToAdmin, executeCategoryCreation);
+
+/**
+ * @swagger
+ * /api/categories/subcategories:
+ * post:
+ * summary: Create a new sub-category (Admin Only)
+ * tags: [Categories]
+ * security:
+ * - bearerAuth: []
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * required: [category_id, name]
+ * properties:
+ * category_id:
+ * type: string
+ * name:
+ * type: string
+ * responses:
+ * 201:
+ * description: Sub-category created successfully
+ */
+router.post('/subcategories', protect, restrictToAdmin, executeSubCategoryCreation);
 
 /**
  * @swagger
@@ -63,14 +82,9 @@ router.post('/', protect, restrictToAdmin, executeCategoryCreation);
  * required: true
  * schema:
  * type: string
- * description: The parent category ID
  * responses:
  * 200:
  * description: List of sub-categories retrieved successfully
- * 400:
- * description: Missing category ID
- * 401:
- * description: Unauthorized session
  */
 router.get('/:categoryId/subcategories', protect, fetchSubCategories);
 

@@ -6,6 +6,8 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import connectDB from './config/db';
 import userRoutes from './routes/userRoutes';
 import categoryRoutes from './routes/categoryRoutes';
+import promptRoutes from './routes/promptRoutes';
+import { errorHandler } from './middlewares/errorMiddleware';
 
 dotenv.config();
 
@@ -46,10 +48,13 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/prompts', promptRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: "Welcome to the Learning Platform API! 🚀" });
 });
+
+app.use(errorHandler);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
