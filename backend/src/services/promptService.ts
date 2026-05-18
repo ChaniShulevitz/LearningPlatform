@@ -1,7 +1,6 @@
 import OpenAI from 'openai';
 import Prompt from '../models/prompt';
 import mongoose from 'mongoose';
-import { cleanAIResponse } from '../utils/aiFilter';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -13,13 +12,16 @@ export const generateAndSaveAIResponse = async (
   subCategoryId: string | undefined,
   userInput: string
 ) => {
+  let completion;
+
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+  
+    completion = await openai.chat.completions.create({
+      model: 'gpt-4', 
       messages: [
         {
           role: 'system',
-          content: "You are an expert learning assistant. Provide structured, educational, and easy-to-understand responses based on the user's requests.",
+          content: "You are an expert learning assistant. Provide structured, educational, and easy-to-understand responses based on the user's requests. Always respond in Hebrew.",
         },
         {
           role: 'user',
@@ -27,23 +29,41 @@ export const generateAndSaveAIResponse = async (
         },
       ],
     });
-
-    const aiResponse = completion.choices[0]?.message?.content || 'לא התקבלה תשובה מהבינה המלאכותית';
-    const cleanedResponse = cleanAIResponse(aiResponse);
-
-    const newPrompt = new Prompt({
-      user_id: userId,
-      category_id: categoryId,
-      sub_category_id: subCategoryId || undefined,
-      prompt: userInput,
-      response: cleanedResponse,
-    });
-
-    return await newPrompt.save();
-  } catch (error) {
-    console.error('Error with OpenAI or DB Saving:', error);
-    throw error; 
+  } catch (error: any) {
+    
+    if (error.status === 403 || error.code === 'model_not_found') {
+      console.warn('gpt-4 was restricted, trying gpt-4-turbo...');
+      completion = await openai.chat.completions.create({
+        model: 'gpt-4-turbo', 
+        messages: [
+          {
+            role: 'system',
+            content: "You are an expert learning assistant. Provide structured, educational, and easy-to-understand responses based on the user's requests. Always respond in Hebrew.",
+          },
+          {
+            role: 'user',
+            content: userInput,
+          },
+        ],
+      });
+    } else {
+      throw error;
+    }
   }
+
+  
+  const aiResponse = completion.choices[0]?.message?.content || 'לא התקבלה תשובה מהבינה המלאכותית';
+
+  
+  const newPrompt = new Prompt({
+    user_id: userId,
+    category_id: categoryId,
+    sub_category_id: subCategoryId || undefined,
+    prompt: userInput,
+    response: aiResponse,
+  });
+
+  return await newPrompt.save();
 };
 
 export const getUserPromptHistory = async (userId: string) => {
