@@ -8,7 +8,7 @@ describe('🚀 API Integration Tests', () => {
     
     it('should block access when no token is provided', async () => {
       const res = await request(app)
-        .post('/api/prompts') // ✨ תיקון: הנתיב האמיתי של השרת שלך!
+        .post('/api/prompts')  
         .send({ category_id: '123', prompt: 'איפור כלה' });
 
       expect(res.statusCode).toBe(401);
