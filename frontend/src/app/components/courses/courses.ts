@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-courses',
@@ -69,36 +69,29 @@ export class CoursesComponent implements OnInit {
 
   createLesson() {
     if (!this.userPrompt || !this.userPrompt.trim() || !this.selectedCategoryId) {
-      alert('אנא ודאי שבחרת קטגוריה והקלדת שאלה.');
+      alert('אנא ודאי שבחרת קטגוריה והקלדת שאלה עבור ה-AI.');
       return;
     }
 
     this.isLoading = true;
     this.aiExplanation = '';
 
-    // 1. שליפת טוקן ה-JWT שנשמר במערכת בזמן ה-Login/Register
-    // בדרך כלל הוא נשמר תחת השם 'token' או 'user' ב-localStorage
-    const token = localStorage.getItem('token'); 
-
-    // 2. יצירת כותרת אבטחה (Headers) עם ה-Bearer Token עבור השרת
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    // 3. בניית אובייקט הנתונים
     const requestBody = {
       category_id: this.selectedCategoryId,
       sub_category_id: this.selectedSubCategoryId || undefined, 
       prompt: this.userPrompt
     };
 
-    // 4. שליחת הבקשה ל-Backend יחד עם ה-Headers המאובטחים
-    this.http.post<any>(this.apiUrl, requestBody, { headers }).subscribe({
+    this.http.post<any>(this.apiUrl, requestBody).subscribe({
       next: (response) => {
         this.isLoading = false;
         
-        // חילוץ התשובה האמיתית שחזרה מה-AI בשרת
-        this.aiExplanation = response.aiResponse || response.explanation || response.text || (response.data ? response.data.text : '') || JSON.stringify(response);
+        // שליפת התשובה בהתאם למבנה אובייקט הנתונים שחוזר מהקונטרולר המתוקן
+        if (response && response.data && response.data.response) {
+          this.aiExplanation = response.data.response;
+        } else {
+          this.aiExplanation = response.aiResponse || response.explanation || response.text || JSON.stringify(response);
+        }
 
         this.myHistory.unshift({
           prompt: this.userPrompt,
@@ -109,7 +102,7 @@ export class CoursesComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         console.error('API Error details:', err);
-        alert('אופס! השרת החזיר שגיאה. בדקי את הטרמינל של ה-Backend לראות את הודעת הקריסה המדויקת של OpenAI.');
+        alert('חל שגיאה בחיבור לשרת ה-Backend. ודאי שהוא מורץ בצורה תקינה.');
       }
     });
   }
